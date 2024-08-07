@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,19 +8,32 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const CampaignEditor = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [campaignName, setCampaignName] = useState('');
   const [emailSubject, setEmailSubject] = useState('');
   const [emailBody, setEmailBody] = useState('');
 
+  useEffect(() => {
+    if (id) {
+      // Fetch campaign data if editing an existing campaign
+      // This is a mock implementation. In a real app, you'd fetch from an API
+      setCampaignName(`Campaign ${id}`);
+      setEmailSubject(`Subject for Campaign ${id}`);
+      setEmailBody(`<p>This is the body for Campaign ${id}</p>`);
+    }
+  }, [id]);
+
   const handleSave = () => {
     // Here you would save the campaign data
-    console.log('Saving campaign:', { campaignName, emailSubject, emailBody });
+    console.log('Saving campaign:', { id, campaignName, emailSubject, emailBody });
+    // Navigate back to the campaigns list after saving
+    navigate('/campaigns');
   };
 
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-6">
-        {id ? 'Edit Campaign' : 'Create New Campaign'}
+        {id ? `Edit Campaign ${id}` : 'Create New Campaign'}
       </h1>
       <Card className="mb-6">
         <CardHeader>

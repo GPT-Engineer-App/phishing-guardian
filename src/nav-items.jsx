@@ -68,3 +68,6 @@ export const hiddenRoutes = [
     page: <CampaignEditor />,
   },
 ];
+
+// Ensure CampaignEditor is imported at the top of the file
+import CampaignEditor from "./pages/CampaignEditor";
