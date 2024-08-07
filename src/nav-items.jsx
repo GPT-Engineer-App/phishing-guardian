@@ -2,7 +2,6 @@ import { Home, BarChart, Users, Mail, FileText, Settings as SettingsIcon, LogIn 
 import Dashboard from "./pages/Dashboard";
 import Campaigns from "./pages/Campaigns";
 import CampaignEditor from "./pages/CampaignEditor";
-import CampaignEditor from "./pages/CampaignEditor";
 import Clients from "./pages/Clients";
 import ClientDetails from "./pages/ClientDetails";
 import Templates from "./pages/Templates";
