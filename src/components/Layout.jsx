@@ -1,9 +1,9 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, Outlet } from 'react-router-dom';
 import { Home, BarChart, Users, Mail, FileText, Settings as SettingsIcon } from 'lucide-react';
 
 const navItems = [
-  { title: "Dashboard", to: "/", icon: <Home className="h-4 w-4" /> },
+  { title: "Dashboard", to: "/dashboard", icon: <Home className="h-4 w-4" /> },
   { title: "Campaigns", to: "/campaigns", icon: <Mail className="h-4 w-4" /> },
   { title: "Clients", to: "/clients", icon: <Users className="h-4 w-4" /> },
   { title: "Templates", to: "/templates", icon: <FileText className="h-4 w-4" /> },
@@ -12,13 +12,6 @@ const navItems = [
 ];
 
 const Sidebar = () => {
-  const location = useLocation();
-  const isLoginPage = location.pathname === '/login';
-
-  if (isLoginPage) {
-    return null;
-  }
-
   return (
     <div className="bg-gray-800 text-white w-64 min-h-screen p-4">
       <h1 className="text-2xl font-bold mb-6">Phishing Sim</h1>
@@ -38,14 +31,20 @@ const Sidebar = () => {
   );
 };
 
-const Layout = ({ children }) => {
+const Layout = () => {
   const location = useLocation();
   const isLoginPage = location.pathname === '/login';
 
+  if (isLoginPage) {
+    return <Outlet />;
+  }
+
   return (
-    <div className={`flex ${isLoginPage ? '' : 'h-screen'}`}>
+    <div className="flex h-screen">
       <Sidebar />
-      <main className={`flex-1 ${isLoginPage ? '' : 'p-4 overflow-auto'}`}>{children}</main>
+      <main className="flex-1 p-4 overflow-auto">
+        <Outlet />
+      </main>
     </div>
   );
 };

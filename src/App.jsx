@@ -24,22 +24,22 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Router>
-          <Layout>
-            <Routes>
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/campaigns" element={<Campaigns />} />
-              <Route path="/clients" element={<Clients />} />
-              <Route path="/templates" element={<Templates />} />
-              <Route path="/reports" element={<Reports />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/clients/:id" element={<ClientDetails />} />
-              <Route path="/campaign-editor" element={<CampaignEditor />} />
-              <Route path="/campaign-editor/:id" element={<CampaignEditor />} />
-              <Route path="/landing/:id" element={<LandingPage />} />
-            </Routes>
-          </Layout>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Navigate to="/dashboard" replace />} />
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="campaigns" element={<Campaigns />} />
+              <Route path="clients" element={<Clients />} />
+              <Route path="templates" element={<Templates />} />
+              <Route path="reports" element={<Reports />} />
+              <Route path="settings" element={<Settings />} />
+              <Route path="clients/:id" element={<ClientDetails />} />
+              <Route path="campaign-editor" element={<CampaignEditor />} />
+              <Route path="campaign-editor/:id" element={<CampaignEditor />} />
+            </Route>
+            <Route path="/login" element={<Login />} />
+            <Route path="/landing/:id" element={<LandingPage />} />
+          </Routes>
         </Router>
       </TooltipProvider>
     </QueryClientProvider>
