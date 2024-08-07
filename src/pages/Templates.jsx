@@ -13,9 +13,20 @@ const initialTemplatesData = [
     name: 'Password Reset Campaign', 
     description: 'Complete campaign for password reset scenario',
     lastModified: '2023-05-15',
+    status: 'active',
     email: { subject: 'Reset Your Password', body: 'Click here to reset your password...' },
     landingPage: '<form>...</form>',
     awarenessPage: '<h1>Security Awareness</h1><p>...</p>'
+  },
+  { 
+    id: 2, 
+    name: 'New Employee Onboarding', 
+    description: 'Draft template for new employee security training',
+    lastModified: '2023-06-01',
+    status: 'draft',
+    email: { subject: 'Welcome to Our Security Program', body: 'As a new employee...' },
+    landingPage: '<h1>Welcome!</h1><p>...</p>',
+    awarenessPage: '<h1>Security Best Practices</h1><p>...</p>'
   },
   // ... more templates
 ];
@@ -28,7 +39,7 @@ const Templates = () => {
 
   const handleCreateTemplate = () => {
     const currentDate = new Date().toISOString().split('T')[0];
-    setTemplates([...templates, { ...currentTemplate, id: templates.length + 1, lastModified: currentDate }]);
+    setTemplates([...templates, { ...currentTemplate, id: templates.length + 1, lastModified: currentDate, status: 'draft' }]);
     setIsCreateDialogOpen(false);
     resetCurrentTemplate();
   };
@@ -48,13 +59,21 @@ const Templates = () => {
       description: '', 
       email: { subject: '', body: '' },
       landingPage: '',
-      awarenessPage: ''
+      awarenessPage: '',
+      status: 'draft'
     });
   };
 
   const openEditDialog = (template) => {
     setCurrentTemplate(template);
     setIsEditDialogOpen(true);
+  };
+
+  const toggleTemplateStatus = (templateId) => {
+    const updatedTemplates = templates.map(template => 
+      template.id === templateId ? { ...template, status: template.status === 'draft' ? 'active' : 'draft' } : template
+    );
+    setTemplates(updatedTemplates);
   };
 
   return (
@@ -67,7 +86,12 @@ const Templates = () => {
         {templates.map((template) => (
           <Card key={template.id} className="flex flex-col">
             <CardHeader>
-              <CardTitle>{template.name}</CardTitle>
+              <CardTitle className="flex justify-between items-center">
+                {template.name}
+                <span className={`text-sm px-2 py-1 rounded ${template.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                  {template.status}
+                </span>
+              </CardTitle>
             </CardHeader>
             <CardContent className="flex-grow">
               <p className="text-sm mb-2">{template.description}</p>
@@ -80,6 +104,9 @@ const Templates = () => {
             </CardContent>
             <CardFooter className="flex justify-between">
               <Button variant="outline" size="sm" onClick={() => openEditDialog(template)}>Edit</Button>
+              <Button variant="outline" size="sm" onClick={() => toggleTemplateStatus(template.id)}>
+                {template.status === 'draft' ? 'Activate' : 'Deactivate'}
+              </Button>
               <Button variant="outline" size="sm">Preview</Button>
             </CardFooter>
           </Card>
@@ -124,6 +151,18 @@ const TemplateForm = ({ template, setTemplate }) => {
 
   return (
     <div className="grid gap-4 py-4">
+      <div className="grid grid-cols-4 items-center gap-4">
+        <Label htmlFor="status" className="text-right">Status</Label>
+        <select
+          id="status"
+          value={template.status}
+          onChange={(e) => setTemplate({ ...template, status: e.target.value })}
+          className="col-span-3 p-2 border rounded"
+        >
+          <option value="draft">Draft</option>
+          <option value="active">Active</option>
+        </select>
+      </div>
       <div className="grid grid-cols-4 items-center gap-4">
         <Label htmlFor="name" className="text-right">Name</Label>
         <Input
