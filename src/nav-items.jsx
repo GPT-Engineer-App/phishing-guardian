@@ -1,4 +1,4 @@
-import { Home, BarChart, Users, Mail, FileText, Settings } from "lucide-react";
+import { Home, BarChart, Users, Mail, FileText, Settings as SettingsIcon } from "lucide-react";
 import Dashboard from "./pages/Dashboard";
 import Campaigns from "./pages/Campaigns";
 import Clients from "./pages/Clients";
@@ -40,7 +40,7 @@ export const navItems = [
   {
     title: "Settings",
     to: "/settings",
-    icon: <Settings className="h-4 w-4" />,
+    icon: <SettingsIcon className="h-4 w-4" />,
     page: <Settings />,
   },
 ];
