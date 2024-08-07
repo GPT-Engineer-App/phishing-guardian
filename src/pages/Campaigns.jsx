@@ -39,7 +39,14 @@ const Campaigns = () => {
     setIsCreateDialogOpen(true);
   };
 
+  const [error, setError] = useState('');
+
   const handleSaveCampaign = async () => {
+    if (!newCampaign.name || !newCampaign.template || !newCampaign.startDate || !newCampaign.startTime) {
+      setError('Please fill in all fields');
+      return;
+    }
+    setError('');
     try {
       const response = await fetch(`${API_URL}/campaigns`, {
         method: 'POST',
@@ -57,7 +64,7 @@ const Campaigns = () => {
       setNewCampaign({ name: '', template: '', startDate: '', startTime: '' });
     } catch (error) {
       console.error('Error creating campaign:', error);
-      // You might want to show an error message to the user here
+      setError('An error occurred while creating the campaign');
     }
   };
 
@@ -255,11 +262,9 @@ const Campaigns = () => {
               />
             </div>
           </div>
+          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
           <DialogFooter>
-            <Button 
-              onClick={handleSaveCampaign} 
-              disabled={!newCampaign.name || !newCampaign.template || !newCampaign.startDate || !newCampaign.startTime}
-            >
+            <Button onClick={handleSaveCampaign}>
               Create Campaign
             </Button>
           </DialogFooter>
