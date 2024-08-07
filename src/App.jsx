@@ -17,9 +17,7 @@ import Layout from './components/Layout';
 
 const queryClient = new QueryClient();
 
-const App = () => {
-  console.log('App component rendered');
-  return (
+const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
