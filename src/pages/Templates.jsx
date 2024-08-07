@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const initialTemplatesData = [
   { 
@@ -113,6 +114,14 @@ const Templates = () => {
 };
 
 const TemplateForm = ({ template, setTemplate }) => {
+  const [previewContent, setPreviewContent] = useState('');
+  const [previewType, setPreviewType] = useState('');
+
+  const handlePreview = (content, type) => {
+    setPreviewContent(content);
+    setPreviewType(type);
+  };
+
   return (
     <div className="grid gap-4 py-4">
       <div className="grid grid-cols-4 items-center gap-4">
@@ -154,23 +163,53 @@ const TemplateForm = ({ template, setTemplate }) => {
       </div>
       <div className="grid grid-cols-4 items-center gap-4">
         <Label htmlFor="landingPage" className="text-right">Landing Page</Label>
-        <Textarea
-          id="landingPage"
-          value={template.landingPage}
-          onChange={(e) => setTemplate({ ...template, landingPage: e.target.value })}
-          className="col-span-3"
-          rows={5}
-        />
+        <div className="col-span-3">
+          <Tabs defaultValue="edit" className="w-full">
+            <TabsList>
+              <TabsTrigger value="edit">Edit</TabsTrigger>
+              <TabsTrigger value="preview">Preview</TabsTrigger>
+            </TabsList>
+            <TabsContent value="edit">
+              <Textarea
+                id="landingPage"
+                value={template.landingPage}
+                onChange={(e) => setTemplate({ ...template, landingPage: e.target.value })}
+                className="w-full"
+                rows={10}
+              />
+            </TabsContent>
+            <TabsContent value="preview">
+              <div className="border p-4 h-[300px] overflow-auto">
+                <div dangerouslySetInnerHTML={{ __html: template.landingPage }} />
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
       <div className="grid grid-cols-4 items-center gap-4">
         <Label htmlFor="awarenessPage" className="text-right">Awareness Page</Label>
-        <Textarea
-          id="awarenessPage"
-          value={template.awarenessPage}
-          onChange={(e) => setTemplate({ ...template, awarenessPage: e.target.value })}
-          className="col-span-3"
-          rows={5}
-        />
+        <div className="col-span-3">
+          <Tabs defaultValue="edit" className="w-full">
+            <TabsList>
+              <TabsTrigger value="edit">Edit</TabsTrigger>
+              <TabsTrigger value="preview">Preview</TabsTrigger>
+            </TabsList>
+            <TabsContent value="edit">
+              <Textarea
+                id="awarenessPage"
+                value={template.awarenessPage}
+                onChange={(e) => setTemplate({ ...template, awarenessPage: e.target.value })}
+                className="w-full"
+                rows={10}
+              />
+            </TabsContent>
+            <TabsContent value="preview">
+              <div className="border p-4 h-[300px] overflow-auto">
+                <div dangerouslySetInnerHTML={{ __html: template.awarenessPage }} />
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </div>
   );
