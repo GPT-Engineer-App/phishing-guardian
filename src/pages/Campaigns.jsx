@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'https://your-backend-url.com/api';
 
 const Campaigns = () => {
   const [campaigns, setCampaignsState] = useState([]);
@@ -43,22 +43,19 @@ const Campaigns = () => {
   const [error, setError] = useState('');
 
   const handleSaveCampaign = async () => {
-    console.log('handleSaveCampaign called');
-    console.log('Saving campaign:', newCampaign);
     if (!newCampaign.name.trim() || !newCampaign.template || !newCampaign.startDate || !newCampaign.startTime) {
-      console.log('Validation failed: Missing required fields');
       setError('Please fill in all fields');
       return;
     }
     setError('');
     try {
-      console.log('Sending POST request to:', `${API_URL}/campaigns`);
       const response = await fetch(`${API_URL}/campaigns`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(newCampaign),
+        credentials: 'include'
       });
       console.log('Response status:', response.status);
       if (!response.ok) {
