@@ -5,12 +5,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
 const ClientDetails = () => {
   const { id } = useParams();
   const [client, setClient] = useState(null);
   const [campaigns, setCampaigns] = useState([]);
   const [users, setUsers] = useState([]);
+  const [isAddUserDialogOpen, setIsAddUserDialogOpen] = useState(false);
+  const [newUser, setNewUser] = useState({ name: '', email: '' });
 
   useEffect(() => {
     // Fetch client details, campaigns, and users
@@ -99,7 +102,10 @@ const ClientDetails = () => {
         </TableBody>
       </Table>
 
-      <h2 className="text-2xl font-bold mb-4">Users</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-bold">Users</h2>
+        <Button onClick={() => setIsAddUserDialogOpen(true)}>Add User</Button>
+      </div>
       <Table>
         <TableHeader>
           <TableRow>
@@ -120,6 +126,48 @@ const ClientDetails = () => {
           ))}
         </TableBody>
       </Table>
+
+      <Dialog open={isAddUserDialogOpen} onOpenChange={setIsAddUserDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New User</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="name" className="text-right">
+                Name
+              </Label>
+              <Input
+                id="name"
+                value={newUser.name}
+                onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="email" className="text-right">
+                Email
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                value={newUser.email}
+                onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+                className="col-span-3"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button onClick={() => {
+              setUsers([...users, { ...newUser, id: users.length + 1 }]);
+              setIsAddUserDialogOpen(false);
+              setNewUser({ name: '', email: '' });
+            }}>
+              Add User
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
