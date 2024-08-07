@@ -22,11 +22,13 @@ const Campaigns = () => {
   useEffect(() => {
     const fetchCampaigns = async () => {
       try {
+        console.log("Fetching campaigns from:", `${API_URL}/campaigns`);
         const response = await fetch(`${API_URL}/campaigns`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
+        console.log("Fetched campaigns:", data);
         setCampaignsState(data);
       } catch (error) {
         console.error('Error fetching campaigns:', error);
@@ -53,6 +55,7 @@ const Campaigns = () => {
   const handleCreateCampaign = () => {
     console.log("Create Campaign button clicked");
     setIsCreateDialogOpen(true);
+    console.log("isCreateDialogOpen set to:", true);
   };
 
   const [error, setError] = useState('');
@@ -142,9 +145,6 @@ const Campaigns = () => {
           <PlusCircle className="mr-2 h-4 w-4" /> Create Campaign
         </Button>
       </div>
-      {isCreateDialogOpen && (
-        <p>Dialog is open</p>
-      )}
       <Table>
         <TableHeader>
           <TableRow>
@@ -224,7 +224,7 @@ const Campaigns = () => {
       </Table>
 
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Create New Campaign</DialogTitle>
           </DialogHeader>
