@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -6,40 +6,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-const initialTemplatesData = [
-  { 
-    id: 1, 
-    name: 'Password Reset Campaign', 
-    description: 'Complete campaign for password reset scenario',
-    lastModified: '2023-05-15',
-    status: 'active',
-    email: { subject: 'Reset Your Password', body: 'Click here to reset your password...' },
-    landingPage: '<form>...</form>',
-    awarenessPage: '<h1>Security Awareness</h1><p>...</p>'
-  },
-  { 
-    id: 2, 
-    name: 'New Employee Onboarding', 
-    description: 'Draft template for new employee security training',
-    lastModified: '2023-06-01',
-    status: 'draft',
-    email: { subject: 'Welcome to Our Security Program', body: 'As a new employee...' },
-    landingPage: '<h1>Welcome!</h1><p>...</p>',
-    awarenessPage: '<h1>Security Best Practices</h1><p>...</p>'
-  },
-  // ... more templates
-];
+import { getTemplates, setTemplates } from '@/lib/utils';
 
 const Templates = () => {
-  const [templates, setTemplates] = useState(initialTemplatesData);
+  const [templates, setTemplatesState] = useState([]);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [currentTemplate, setCurrentTemplate] = useState(null);
 
+  useEffect(() => {
+    const loadedTemplates = getTemplates();
+    setTemplatesState(loadedTemplates);
+  }, []);
+
   const handleCreateTemplate = () => {
     const currentDate = new Date().toISOString().split('T')[0];
-    setTemplates([...templates, { ...currentTemplate, id: templates.length + 1, lastModified: currentDate, status: 'draft' }]);
+    const updatedTemplates = [...templates, { ...currentTemplate, id: templates.length + 1, lastModified: currentDate, status: 'draft' }];
+    setTemplatesState(updatedTemplates);
+    setTemplates(updatedTemplates);
     setIsCreateDialogOpen(false);
     resetCurrentTemplate();
   };
@@ -48,6 +32,7 @@ const Templates = () => {
     const updatedTemplates = templates.map(template => 
       template.id === currentTemplate.id ? { ...currentTemplate, lastModified: new Date().toISOString().split('T')[0] } : template
     );
+    setTemplatesState(updatedTemplates);
     setTemplates(updatedTemplates);
     setIsEditDialogOpen(false);
     resetCurrentTemplate();
@@ -73,6 +58,7 @@ const Templates = () => {
     const updatedTemplates = templates.map(template => 
       template.id === templateId ? { ...template, status: template.status === 'draft' ? 'active' : 'draft' } : template
     );
+    setTemplatesState(updatedTemplates);
     setTemplates(updatedTemplates);
   };
 

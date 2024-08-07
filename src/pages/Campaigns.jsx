@@ -8,21 +8,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-
-const initialCampaignsData = [
-  { id: 1, name: 'Spring Phishing Test', template: 'Password Reset', startDate: '2023-06-01', startTime: '09:00', status: 'Active', sentEmails: 1000, clickRate: '15%' },
-  { id: 2, name: 'New Employee Training', template: 'Onboarding', startDate: '2023-07-15', startTime: '14:00', status: 'Scheduled', sentEmails: 0, clickRate: '0%' },
-  { id: 3, name: 'Q4 Security Awareness', template: 'Security Update', startDate: '2023-10-01', startTime: '10:00', status: 'Completed', sentEmails: 5000, clickRate: '22%' },
-];
+import { getCampaigns, setCampaigns } from '@/lib/utils';
 
 const Campaigns = () => {
-  const [campaigns, setCampaigns] = useState(initialCampaignsData);
+  const [campaigns, setCampaignsState] = useState([]);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [newCampaign, setNewCampaign] = useState({ name: '', template: '', startDate: '', startTime: '' });
   const [templates, setTemplates] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
+    const loadedCampaigns = getCampaigns();
+    setCampaignsState(loadedCampaigns);
     setTemplates(['Password Reset', 'Onboarding', 'Security Update', 'Phishing Awareness']);
   }, []);
 
@@ -38,7 +35,9 @@ const Campaigns = () => {
       sentEmails: 0,
       clickRate: '0%'
     };
-    setCampaigns(prevCampaigns => [...prevCampaigns, campaignToAdd]);
+    const updatedCampaigns = [...campaigns, campaignToAdd];
+    setCampaignsState(updatedCampaigns);
+    setCampaigns(updatedCampaigns);
     setIsCreateDialogOpen(false);
     setNewCampaign({ name: '', template: '', startDate: '', startTime: '' });
   };
@@ -48,15 +47,19 @@ const Campaigns = () => {
   };
 
   const handleDeleteCampaign = (campaignId) => {
-    setCampaigns(campaigns.filter(campaign => campaign.id !== campaignId));
+    const updatedCampaigns = campaigns.filter(campaign => campaign.id !== campaignId);
+    setCampaignsState(updatedCampaigns);
+    setCampaigns(updatedCampaigns);
   };
 
   const handleToggleCampaignStatus = (campaignId) => {
-    setCampaigns(campaigns.map(campaign => 
+    const updatedCampaigns = campaigns.map(campaign => 
       campaign.id === campaignId 
         ? { ...campaign, status: campaign.status === 'Active' ? 'Paused' : 'Active' }
         : campaign
-    ));
+    );
+    setCampaignsState(updatedCampaigns);
+    setCampaigns(updatedCampaigns);
   };
 
   const handleViewReport = (campaignId) => {
