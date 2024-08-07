@@ -71,8 +71,6 @@ const Campaigns = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch templates from the server
-    // This is a mock implementation. In a real app, you'd fetch from an API
     setTemplates(['Password Reset', 'Onboarding', 'Security Update', 'Phishing Awareness']);
   }, []);
 
@@ -84,7 +82,9 @@ const Campaigns = () => {
     const campaignToAdd = {
       ...newCampaign,
       id: campaigns.length + 1,
-      status: 'Scheduled'
+      status: 'Scheduled',
+      sentEmails: 0,
+      clickRate: '0%'
     };
     setCampaigns([...campaigns, campaignToAdd]);
     setIsCreateDialogOpen(false);
@@ -93,6 +93,22 @@ const Campaigns = () => {
 
   const handleEditCampaign = (campaignId) => {
     navigate(`/campaign-editor/${campaignId}`);
+  };
+
+  const handleDeleteCampaign = (campaignId) => {
+    setCampaigns(campaigns.filter(campaign => campaign.id !== campaignId));
+  };
+
+  const handleToggleCampaignStatus = (campaignId) => {
+    setCampaigns(campaigns.map(campaign => 
+      campaign.id === campaignId 
+        ? { ...campaign, status: campaign.status === 'Active' ? 'Paused' : 'Active' }
+        : campaign
+    ));
+  };
+
+  const handleViewReport = (campaignId) => {
+    navigate(`/reports/${campaignId}`);
   };
 
   return (
