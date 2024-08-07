@@ -8,8 +8,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import axios from 'axios';
-
 const API_URL = 'http://localhost:5000/api';
 
 const Campaigns = () => {
@@ -22,8 +20,12 @@ const Campaigns = () => {
   useEffect(() => {
     const fetchCampaigns = async () => {
       try {
-        const response = await axios.get(`${API_URL}/campaigns`);
-        setCampaignsState(response.data);
+        const response = await fetch(`${API_URL}/campaigns`);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setCampaignsState(data);
       } catch (error) {
         console.error('Error fetching campaigns:', error);
       }
@@ -39,8 +41,18 @@ const Campaigns = () => {
 
   const handleSaveCampaign = async () => {
     try {
-      const response = await axios.post(`${API_URL}/campaigns`, newCampaign);
-      setCampaignsState([...campaigns, response.data]);
+      const response = await fetch(`${API_URL}/campaigns`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newCampaign),
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      setCampaignsState([...campaigns, data]);
       setIsCreateDialogOpen(false);
       setNewCampaign({ name: '', template: '', startDate: '', startTime: '' });
     } catch (error) {
@@ -54,7 +66,12 @@ const Campaigns = () => {
 
   const handleDeleteCampaign = async (campaignId) => {
     try {
-      await axios.delete(`${API_URL}/campaigns/${campaignId}`);
+      const response = await fetch(`${API_URL}/campaigns/${campaignId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
       const updatedCampaigns = campaigns.filter(campaign => campaign._id !== campaignId);
       setCampaignsState(updatedCampaigns);
     } catch (error) {
@@ -66,7 +83,16 @@ const Campaigns = () => {
     try {
       const campaign = campaigns.find(c => c._id === campaignId);
       const newStatus = campaign.status === 'Active' ? 'Paused' : 'Active';
-      await axios.patch(`${API_URL}/campaigns/${campaignId}`, { status: newStatus });
+      const response = await fetch(`${API_URL}/campaigns/${campaignId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
       const updatedCampaigns = campaigns.map(c => 
         c._id === campaignId ? { ...c, status: newStatus } : c
       );
