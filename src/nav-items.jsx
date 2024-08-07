@@ -1,6 +1,7 @@
 import { Home, BarChart, Users, Mail, FileText, Settings as SettingsIcon, LogIn } from "lucide-react";
 import Dashboard from "./pages/Dashboard";
 import Campaigns from "./pages/Campaigns";
+import CampaignEditor from "./pages/CampaignEditor";
 import Clients from "./pages/Clients";
 import ClientDetails from "./pages/ClientDetails";
 import Templates from "./pages/Templates";
@@ -57,5 +58,13 @@ export const hiddenRoutes = [
   {
     to: "/clients/:id",
     page: <ClientDetails />,
+  },
+  {
+    to: "/campaign-editor",
+    page: <CampaignEditor />,
+  },
+  {
+    to: "/campaign-editor/:id",
+    page: <CampaignEditor />,
   },
 ];
