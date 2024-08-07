@@ -40,6 +40,10 @@ const Campaigns = () => {
   };
 
   const handleSaveCampaign = async () => {
+    if (!newCampaign.name || !newCampaign.template || !newCampaign.startDate || !newCampaign.startTime) {
+      console.error('All fields are required');
+      return;
+    }
     try {
       const response = await fetch(`${API_URL}/campaigns`, {
         method: 'POST',
@@ -256,7 +260,9 @@ const Campaigns = () => {
             </div>
           </div>
           <DialogFooter>
-            <Button onClick={handleSaveCampaign}>Create Campaign</Button>
+            <Button onClick={handleSaveCampaign} disabled={!newCampaign.name || !newCampaign.template || !newCampaign.startDate || !newCampaign.startTime}>
+              Create Campaign
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
