@@ -6,14 +6,16 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const ClientDetails = () => {
   const { id } = useParams();
   const [client, setClient] = useState(null);
   const [campaigns, setCampaigns] = useState([]);
   const [users, setUsers] = useState([]);
+  const [groups, setGroups] = useState(['Management', 'IT', 'HR', 'Finance']);
   const [isAddUserDialogOpen, setIsAddUserDialogOpen] = useState(false);
-  const [newUser, setNewUser] = useState({ name: '', email: '' });
+  const [newUser, setNewUser] = useState({ name: '', email: '', group: '' });
 
   useEffect(() => {
     // Fetch client details, campaigns, and users
@@ -29,8 +31,8 @@ const ClientDetails = () => {
       { id: 2, name: 'Summer Campaign', status: 'Planned' },
     ]);
     setUsers([
-      { id: 1, name: 'John Doe', email: 'john@acme.com' },
-      { id: 2, name: 'Jane Smith', email: 'jane@acme.com' },
+      { id: 1, name: 'John Doe', email: 'john@acme.com', group: 'Management' },
+      { id: 2, name: 'Jane Smith', email: 'jane@acme.com', group: 'IT' },
     ]);
   }, [id]);
 
@@ -111,6 +113,7 @@ const ClientDetails = () => {
           <TableRow>
             <TableHead>Name</TableHead>
             <TableHead>Email</TableHead>
+            <TableHead>Group</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -119,6 +122,7 @@ const ClientDetails = () => {
             <TableRow key={user.id}>
               <TableCell>{user.name}</TableCell>
               <TableCell>{user.email}</TableCell>
+              <TableCell>{user.group}</TableCell>
               <TableCell>
                 <Button variant="outline" size="sm">Edit</Button>
               </TableCell>
@@ -156,12 +160,32 @@ const ClientDetails = () => {
                 className="col-span-3"
               />
             </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="group" className="text-right">
+                Group
+              </Label>
+              <Select
+                value={newUser.group}
+                onValueChange={(value) => setNewUser({ ...newUser, group: value })}
+              >
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Select a group" />
+                </SelectTrigger>
+                <SelectContent>
+                  {groups.map((group) => (
+                    <SelectItem key={group} value={group}>
+                      {group}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           <DialogFooter>
             <Button onClick={() => {
               setUsers([...users, { ...newUser, id: users.length + 1 }]);
               setIsAddUserDialogOpen(false);
-              setNewUser({ name: '', email: '' });
+              setNewUser({ name: '', email: '', group: '' });
             }}>
               Add User
             </Button>
