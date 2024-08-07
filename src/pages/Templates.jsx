@@ -208,7 +208,7 @@ const TemplateForm = ({ template, setTemplate }) => {
               />
             </TabsContent>
             <TabsContent value="preview">
-              <div className="border p-4 h-[300px] overflow-auto">
+              <div className="border p-4 h-72 overflow-auto">
                 <div dangerouslySetInnerHTML={{ __html: template.email.body.replace(/\{\{LANDING_PAGE_URL\}\}/g, `${window.location.origin}/landing/${template.landingPage.id}`) }} />
               </div>
             </TabsContent>
@@ -248,7 +248,7 @@ const TemplateForm = ({ template, setTemplate }) => {
               />
             </TabsContent>
             <TabsContent value="preview">
-              <div className="border p-4 h-[300px] overflow-auto">
+              <div className="border p-4 h-72 overflow-auto">
                 <div dangerouslySetInnerHTML={{ __html: template.landingPage.content.replace(/\{\{LANDING_PAGE_URL\}\}/g, `${window.location.origin}/landing/${template.landingPage.id}`) }} />
               </div>
             </TabsContent>
@@ -281,7 +281,7 @@ const TemplateForm = ({ template, setTemplate }) => {
               />
             </TabsContent>
             <TabsContent value="preview">
-              <div className="border p-4 h-[300px] overflow-auto">
+              <div className="border p-4 h-72 overflow-auto">
                 <div dangerouslySetInnerHTML={{ __html: template.awarenessPage }} />
               </div>
             </TabsContent>
