@@ -43,7 +43,8 @@ const Campaigns = () => {
   const [error, setError] = useState('');
 
   const handleSaveCampaign = async () => {
-    if (!newCampaign.name || !newCampaign.template || !newCampaign.startDate || !newCampaign.startTime) {
+    console.log('Saving campaign:', newCampaign);
+    if (!newCampaign.name.trim() || !newCampaign.template || !newCampaign.startDate || !newCampaign.startTime) {
       setError('Please fill in all fields');
       return;
     }
@@ -209,9 +210,6 @@ const Campaigns = () => {
           <DialogHeader>
             <DialogTitle>Create New Campaign</DialogTitle>
           </DialogHeader>
-          {isCreateDialogOpen && (
-            <p>Dialog content is rendered</p>
-          )}
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">
@@ -277,6 +275,7 @@ const Campaigns = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
     </div>
   );
 };
