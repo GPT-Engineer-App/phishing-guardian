@@ -43,13 +43,16 @@ const Campaigns = () => {
   const [error, setError] = useState('');
 
   const handleSaveCampaign = async () => {
+    console.log('handleSaveCampaign called');
     console.log('Saving campaign:', newCampaign);
     if (!newCampaign.name.trim() || !newCampaign.template || !newCampaign.startDate || !newCampaign.startTime) {
+      console.log('Validation failed: Missing required fields');
       setError('Please fill in all fields');
       return;
     }
     setError('');
     try {
+      console.log('Sending POST request to:', `${API_URL}/campaigns`);
       const response = await fetch(`${API_URL}/campaigns`, {
         method: 'POST',
         headers: {
@@ -57,16 +60,19 @@ const Campaigns = () => {
         },
         body: JSON.stringify(newCampaign),
       });
+      console.log('Response status:', response.status);
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error(`Network response was not ok: ${response.status}`);
       }
       const data = await response.json();
+      console.log('Received data:', data);
       setCampaignsState(prevCampaigns => [...prevCampaigns, data]);
       setIsCreateDialogOpen(false);
       setNewCampaign({ name: '', template: '', startDate: '', startTime: '' });
+      console.log('Campaign created successfully');
     } catch (error) {
       console.error('Error creating campaign:', error);
-      setError('An error occurred while creating the campaign');
+      setError(`An error occurred while creating the campaign: ${error.message}`);
     }
   };
 
