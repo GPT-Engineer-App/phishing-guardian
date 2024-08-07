@@ -38,7 +38,11 @@ const Campaigns = () => {
       sentEmails: 0,
       clickRate: '0%'
     };
-    setCampaigns([...campaigns, campaignToAdd]);
+    setCampaigns(prevCampaigns => {
+      const updatedCampaigns = [...prevCampaigns, campaignToAdd];
+      console.log('Updated campaigns:', updatedCampaigns);
+      return updatedCampaigns;
+    });
     setIsCreateDialogOpen(false);
     setNewCampaign({ name: '', template: '', startDate: '', startTime: '' });
   };
