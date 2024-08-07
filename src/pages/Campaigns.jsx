@@ -1,21 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { PlusCircle } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const initialCampaignsData = [
-  { id: 1, name: 'Spring Phishing Test', status: 'Active', sent: 1000, opened: 750, clicked: 500 },
-  { id: 2, name: 'New Employee Training', status: 'Scheduled', sent: 0, opened: 0, clicked: 0 },
-  { id: 3, name: 'Q4 Security Awareness', status: 'Completed', sent: 5000, opened: 4000, clicked: 2000 },
+  { id: 1, name: 'Spring Phishing Test', template: 'Password Reset', startDate: '2023-06-01', startTime: '09:00', status: 'Active' },
+  { id: 2, name: 'New Employee Training', template: 'Onboarding', startDate: '2023-07-15', startTime: '14:00', status: 'Scheduled' },
+  { id: 3, name: 'Q4 Security Awareness', template: 'Security Update', startDate: '2023-10-01', startTime: '10:00', status: 'Completed' },
 ];
 
 const Campaigns = () => {
   const [campaigns, setCampaigns] = useState(initialCampaignsData);
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [newCampaign, setNewCampaign] = useState({ name: '', template: '', startDate: '', startTime: '' });
+  const [templates, setTemplates] = useState([]);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    // Fetch templates from the server
+    // This is a mock implementation. In a real app, you'd fetch from an API
+    setTemplates(['Password Reset', 'Onboarding', 'Security Update', 'Phishing Awareness']);
+  }, []);
+
   const handleCreateCampaign = () => {
-    navigate('/campaign-editor');
+    setIsCreateDialogOpen(true);
+  };
+
+  const handleSaveCampaign = () => {
+    const campaignToAdd = {
+      ...newCampaign,
+      id: campaigns.length + 1,
+      status: 'Scheduled'
+    };
+    setCampaigns([...campaigns, campaignToAdd]);
+    setIsCreateDialogOpen(false);
+    setNewCampaign({ name: '', template: '', startDate: '', startTime: '' });
   };
 
   const handleEditCampaign = (campaignId) => {
@@ -34,10 +58,10 @@ const Campaigns = () => {
         <TableHeader>
           <TableRow>
             <TableHead>Name</TableHead>
+            <TableHead>Template</TableHead>
+            <TableHead>Start Date</TableHead>
+            <TableHead>Start Time</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead>Sent</TableHead>
-            <TableHead>Opened</TableHead>
-            <TableHead>Clicked</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -45,10 +69,10 @@ const Campaigns = () => {
           {campaigns.map((campaign) => (
             <TableRow key={campaign.id}>
               <TableCell>{campaign.name}</TableCell>
+              <TableCell>{campaign.template}</TableCell>
+              <TableCell>{campaign.startDate}</TableCell>
+              <TableCell>{campaign.startTime}</TableCell>
               <TableCell>{campaign.status}</TableCell>
-              <TableCell>{campaign.sent}</TableCell>
-              <TableCell>{campaign.opened}</TableCell>
-              <TableCell>{campaign.clicked}</TableCell>
               <TableCell>
                 <Button variant="outline" size="sm" onClick={() => handleEditCampaign(campaign.id)}>Edit</Button>
               </TableCell>
@@ -56,6 +80,74 @@ const Campaigns = () => {
           ))}
         </TableBody>
       </Table>
+
+      <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create New Campaign</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="name" className="text-right">
+                Campaign Name
+              </Label>
+              <Input
+                id="name"
+                value={newCampaign.name}
+                onChange={(e) => setNewCampaign({ ...newCampaign, name: e.target.value })}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="template" className="text-right">
+                Template
+              </Label>
+              <Select
+                value={newCampaign.template}
+                onValueChange={(value) => setNewCampaign({ ...newCampaign, template: value })}
+              >
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Select a template" />
+                </SelectTrigger>
+                <SelectContent>
+                  {templates.map((template) => (
+                    <SelectItem key={template} value={template}>
+                      {template}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="startDate" className="text-right">
+                Start Date
+              </Label>
+              <Input
+                id="startDate"
+                type="date"
+                value={newCampaign.startDate}
+                onChange={(e) => setNewCampaign({ ...newCampaign, startDate: e.target.value })}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="startTime" className="text-right">
+                Start Time
+              </Label>
+              <Input
+                id="startTime"
+                type="time"
+                value={newCampaign.startTime}
+                onChange={(e) => setNewCampaign({ ...newCampaign, startTime: e.target.value })}
+                className="col-span-3"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button onClick={handleSaveCampaign}>Create Campaign</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
