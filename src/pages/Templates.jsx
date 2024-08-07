@@ -216,6 +216,9 @@ const TemplateForm = ({ template, setTemplate }) => {
           <p className="text-sm text-gray-500 mt-1">
             Use {{LANDING_PAGE_URL}} to insert the landing page link in the email body. This placeholder will be replaced with the actual URL when the email is sent.
           </p>
+          <p className="text-sm text-gray-500 mt-1">
+            Use {{LANDING_PAGE_URL}} to insert the landing page link in the email body. This placeholder will be replaced with the actual URL when the email is sent.
+          </p>
         </div>
       </div>
       <div className="grid grid-cols-4 items-center gap-4">
