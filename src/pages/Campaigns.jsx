@@ -52,11 +52,12 @@ const Campaigns = () => {
         throw new Error('Network response was not ok');
       }
       const data = await response.json();
-      setCampaignsState([...campaigns, data]);
+      setCampaignsState(prevCampaigns => [...prevCampaigns, data]);
       setIsCreateDialogOpen(false);
       setNewCampaign({ name: '', template: '', startDate: '', startTime: '' });
     } catch (error) {
       console.error('Error creating campaign:', error);
+      // You might want to show an error message to the user here
     }
   };
 

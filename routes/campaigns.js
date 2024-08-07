@@ -18,7 +18,10 @@ router.post('/', async (req, res) => {
     name: req.body.name,
     template: req.body.template,
     startDate: req.body.startDate,
-    startTime: req.body.startTime
+    startTime: req.body.startTime,
+    status: 'Scheduled',
+    sentEmails: 0,
+    clickRate: '0%'
   });
 
   try {
