@@ -25,7 +25,7 @@ const initialTemplatesData = [
     lastModified: '2023-06-01',
     status: 'draft',
     email: { subject: 'Welcome to Our Security Program', body: 'As a new employee...' },
-    landingPage: '<h1>Welcome!</h1><p>...</p>',
+    landingPage: { id: 'new-emp-1', content: '<h1>Welcome!</h1><p>...</p>' },
     awarenessPage: '<h1>Security Best Practices</h1><p>...</p>'
   },
   // ... more templates
@@ -98,8 +98,8 @@ const Templates = () => {
               <p className="text-xs text-gray-400 mb-2">Last modified: {template.lastModified}</p>
               <div className="space-y-2">
                 <p className="text-sm font-semibold">Email Subject: {template.email.subject}</p>
-                <p className="text-sm font-semibold">Landing Page: {template.landingPage.substring(0, 50)}...</p>
-                <p className="text-sm font-semibold">Awareness Page: {template.awarenessPage.substring(0, 50)}...</p>
+                <p className="text-sm font-semibold">Landing Page: {template.landingPage.content ? template.landingPage.content.substring(0, 50) : ''}...</p>
+                <p className="text-sm font-semibold">Awareness Page: {template.awarenessPage ? template.awarenessPage.substring(0, 50) : ''}...</p>
               </div>
             </CardContent>
             <CardFooter className="flex justify-between">
