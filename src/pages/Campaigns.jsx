@@ -8,7 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { getCampaigns, setCampaigns } from '@/lib/utils';
+import axios from 'axios';
+
+const API_URL = 'http://localhost:5000/api';
 
 const Campaigns = () => {
   const [campaigns, setCampaignsState] = useState([]);
@@ -18,8 +20,16 @@ const Campaigns = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const loadedCampaigns = getCampaigns();
-    setCampaignsState(loadedCampaigns);
+    const fetchCampaigns = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/campaigns`);
+        setCampaignsState(response.data);
+      } catch (error) {
+        console.error('Error fetching campaigns:', error);
+      }
+    };
+
+    fetchCampaigns();
     setTemplates(['Password Reset', 'Onboarding', 'Security Update', 'Phishing Awareness']);
   }, []);
 
@@ -27,39 +37,43 @@ const Campaigns = () => {
     setIsCreateDialogOpen(true);
   };
 
-  const handleSaveCampaign = () => {
-    const campaignToAdd = {
-      ...newCampaign,
-      id: campaigns.length + 1,
-      status: 'Scheduled',
-      sentEmails: 0,
-      clickRate: '0%'
-    };
-    const updatedCampaigns = [...campaigns, campaignToAdd];
-    setCampaignsState(updatedCampaigns);
-    setCampaigns(updatedCampaigns);
-    setIsCreateDialogOpen(false);
-    setNewCampaign({ name: '', template: '', startDate: '', startTime: '' });
+  const handleSaveCampaign = async () => {
+    try {
+      const response = await axios.post(`${API_URL}/campaigns`, newCampaign);
+      setCampaignsState([...campaigns, response.data]);
+      setIsCreateDialogOpen(false);
+      setNewCampaign({ name: '', template: '', startDate: '', startTime: '' });
+    } catch (error) {
+      console.error('Error creating campaign:', error);
+    }
   };
 
   const handleEditCampaign = (campaignId) => {
     navigate(`/campaign-editor/${campaignId}`);
   };
 
-  const handleDeleteCampaign = (campaignId) => {
-    const updatedCampaigns = campaigns.filter(campaign => campaign.id !== campaignId);
-    setCampaignsState(updatedCampaigns);
-    setCampaigns(updatedCampaigns);
+  const handleDeleteCampaign = async (campaignId) => {
+    try {
+      await axios.delete(`${API_URL}/campaigns/${campaignId}`);
+      const updatedCampaigns = campaigns.filter(campaign => campaign._id !== campaignId);
+      setCampaignsState(updatedCampaigns);
+    } catch (error) {
+      console.error('Error deleting campaign:', error);
+    }
   };
 
-  const handleToggleCampaignStatus = (campaignId) => {
-    const updatedCampaigns = campaigns.map(campaign => 
-      campaign.id === campaignId 
-        ? { ...campaign, status: campaign.status === 'Active' ? 'Paused' : 'Active' }
-        : campaign
-    );
-    setCampaignsState(updatedCampaigns);
-    setCampaigns(updatedCampaigns);
+  const handleToggleCampaignStatus = async (campaignId) => {
+    try {
+      const campaign = campaigns.find(c => c._id === campaignId);
+      const newStatus = campaign.status === 'Active' ? 'Paused' : 'Active';
+      await axios.patch(`${API_URL}/campaigns/${campaignId}`, { status: newStatus });
+      const updatedCampaigns = campaigns.map(c => 
+        c._id === campaignId ? { ...c, status: newStatus } : c
+      );
+      setCampaignsState(updatedCampaigns);
+    } catch (error) {
+      console.error('Error toggling campaign status:', error);
+    }
   };
 
   const handleViewReport = (campaignId) => {
