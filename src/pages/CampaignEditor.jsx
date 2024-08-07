@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { generateUniqueLink } from '../utils/campaignUtils';
 
 const CampaignEditor = () => {
   const { id } = useParams();
@@ -13,7 +12,6 @@ const CampaignEditor = () => {
   const [campaignName, setCampaignName] = useState('');
   const [emailSubject, setEmailSubject] = useState('');
   const [emailBody, setEmailBody] = useState('');
-  const [landingPageLink, setLandingPageLink] = useState('');
 
   useEffect(() => {
     if (id) {
@@ -22,16 +20,12 @@ const CampaignEditor = () => {
       setCampaignName(`Campaign ${id}`);
       setEmailSubject(`Subject for Campaign ${id}`);
       setEmailBody(`<p>This is the body for Campaign ${id}</p>`);
-      setLandingPageLink(generateUniqueLink(id));
-    } else {
-      // Generate a new link for a new campaign
-      setLandingPageLink(generateUniqueLink());
     }
   }, [id]);
 
   const handleSave = () => {
     // Here you would save the campaign data
-    console.log('Saving campaign:', { id, campaignName, emailSubject, emailBody, landingPageLink });
+    console.log('Saving campaign:', { id, campaignName, emailSubject, emailBody });
     // Navigate back to the campaigns list after saving
     navigate('/campaigns');
   };
@@ -83,18 +77,6 @@ const CampaignEditor = () => {
                 placeholder="Enter email body in HTML format"
                 rows={10}
               />
-            </div>
-            <div>
-              <Label htmlFor="landingPageLink">Landing Page Link</Label>
-              <Input
-                id="landingPageLink"
-                value={landingPageLink}
-                readOnly
-                className="bg-gray-100"
-              />
-              <p className="text-sm text-gray-500 mt-2">
-                Include this link in your email body to direct recipients to the landing page.
-              </p>
             </div>
           </div>
         </CardContent>

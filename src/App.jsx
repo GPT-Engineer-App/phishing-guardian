@@ -1,43 +1,67 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import Dashboard from './pages/Dashboard';
-import Campaigns from './pages/Campaigns';
-import Clients from './pages/Clients';
-import Templates from './pages/Templates';
-import Reports from './pages/Reports';
-import Settings from './pages/Settings';
-import Login from './pages/Login';
-import ClientDetails from './pages/ClientDetails';
-import CampaignEditor from './pages/CampaignEditor';
-import LandingPage from './pages/LandingPage';
-import Layout from './components/Layout';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route, Link, useLocation } from "react-router-dom";
+import { navItems, hiddenRoutes } from "./nav-items";
+import CampaignEditor from "./pages/CampaignEditor";
 
 const queryClient = new QueryClient();
+
+const Sidebar = () => {
+  const location = useLocation();
+  const isLoginPage = location.pathname === '/login';
+
+  if (isLoginPage) {
+    return null;
+  }
+
+  return (
+    <div className="bg-gray-800 text-white w-64 min-h-screen p-4">
+      <h1 className="text-2xl font-bold mb-6">Phishing Sim</h1>
+      <nav>
+        <ul>
+          {navItems.map(({ title, to, icon }) => (
+            <li key={to} className="mb-2">
+              <Link to={to} className="flex items-center p-2 rounded hover:bg-gray-700">
+                {icon}
+                <span className="ml-2">{title}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+  );
+};
+
+const Layout = ({ children }) => {
+  const location = useLocation();
+  const isLoginPage = location.pathname === '/login';
+
+  return (
+    <div className={`flex ${isLoginPage ? '' : 'h-screen'}`}>
+      <Sidebar />
+      <main className={`flex-1 ${isLoginPage ? '' : 'p-4 overflow-auto'}`}>{children}</main>
+    </div>
+  );
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
-      <Router>
+      <BrowserRouter>
         <Layout>
           <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/campaigns" element={<Campaigns />} />
-            <Route path="/clients" element={<Clients />} />
-            <Route path="/templates" element={<Templates />} />
-            <Route path="/reports" element={<Reports />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/clients/:id" element={<ClientDetails />} />
-            <Route path="/campaign-editor" element={<CampaignEditor />} />
-            <Route path="/campaign-editor/:id" element={<CampaignEditor />} />
-            <Route path="/landing/:id" element={<LandingPage />} />
+            {navItems.map(({ to, page }) => (
+              <Route key={to} path={to} element={page} />
+            ))}
+            {hiddenRoutes.map(({ to, page }) => (
+              <Route key={to} path={to} element={page} />
+            ))}
           </Routes>
         </Layout>
-      </Router>
+      </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
 );
