@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-const API_URL = 'https://your-backend-url.com/api';
+const API_URL = 'http://localhost:5000/api';
 
 const Campaigns = () => {
   const [campaigns, setCampaignsState] = useState([]);
@@ -35,6 +35,19 @@ const Campaigns = () => {
     setTemplates(['Password Reset', 'Onboarding', 'Security Update', 'Phishing Awareness']);
   }, []);
 
+  const fetchCampaigns = async () => {
+    try {
+      const response = await fetch(`${API_URL}/campaigns`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      setCampaignsState(data);
+    } catch (error) {
+      console.error('Error fetching campaigns:', error);
+    }
+  };
+
   const handleCreateCampaign = () => {
     console.log("Create Campaign button clicked");
     setIsCreateDialogOpen(true);
@@ -55,7 +68,6 @@ const Campaigns = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(newCampaign),
-        credentials: 'include'
       });
       console.log('Response status:', response.status);
       if (!response.ok) {
@@ -67,6 +79,7 @@ const Campaigns = () => {
       setIsCreateDialogOpen(false);
       setNewCampaign({ name: '', template: '', startDate: '', startTime: '' });
       console.log('Campaign created successfully');
+      fetchCampaigns(); // Fetch updated campaigns list
     } catch (error) {
       console.error('Error creating campaign:', error);
       setError(`An error occurred while creating the campaign: ${error.message}`);
