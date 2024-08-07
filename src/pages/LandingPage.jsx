@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-const LandingPage = () => {
+export const LandingPage = () => {
   const { id } = useParams();
   const [pageContent, setPageContent] = useState('');
 
@@ -24,4 +24,3 @@ const LandingPage = () => {
   );
 };
 
-export default LandingPage;

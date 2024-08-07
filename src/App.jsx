@@ -12,7 +12,7 @@ import Settings from './pages/Settings';
 import Login from './pages/Login';
 import ClientDetails from './pages/ClientDetails';
 import CampaignEditor from './pages/CampaignEditor';
-import LandingPage from './pages/LandingPage';
+import LandingPage from './pages/LandingPage.jsx';
 import Layout from './components/Layout';
 
 const queryClient = new QueryClient();
