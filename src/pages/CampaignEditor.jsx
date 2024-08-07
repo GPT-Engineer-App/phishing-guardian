@@ -7,11 +7,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { generateUniqueLink } from '../utils/campaignUtils';
 import { toPng } from 'html-to-image';
-import { toast } from 'sonner';
 
 const CampaignEditor = () => {
   const [previewImage, setPreviewImage] = useState(null);
-  const [isGeneratingPreview, setIsGeneratingPreview] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
   const [campaignName, setCampaignName] = useState('');
@@ -41,24 +39,15 @@ const CampaignEditor = () => {
   };
 
   const generatePreview = () => {
-    setIsGeneratingPreview(true);
     const node = document.getElementById('email-preview');
     if (node) {
-      toPng(node, { cacheBust: true })
+      toPng(node)
         .then((dataUrl) => {
           setPreviewImage(dataUrl);
-          toast.success('Preview generated successfully');
         })
         .catch((error) => {
           console.error('Error generating preview:', error);
-          toast.error('Failed to generate preview. Please try again.');
-        })
-        .finally(() => {
-          setIsGeneratingPreview(false);
         });
-    } else {
-      toast.error('Preview element not found');
-      setIsGeneratingPreview(false);
     }
   };
 
@@ -134,9 +123,7 @@ const CampaignEditor = () => {
             <h2>{emailSubject}</h2>
             <div dangerouslySetInnerHTML={{ __html: emailBody }} />
           </div>
-          <Button onClick={generatePreview} disabled={isGeneratingPreview}>
-            {isGeneratingPreview ? 'Generating...' : 'Generate Preview Image'}
-          </Button>
+          <Button onClick={generatePreview}>Generate Preview Image</Button>
           {previewImage && (
             <div className="mt-4">
               <img src={previewImage} alt="Email Preview" className="max-w-full h-auto" />
