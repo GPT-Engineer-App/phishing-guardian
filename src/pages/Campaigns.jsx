@@ -2,17 +2,66 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, Edit, Trash2, Play, Pause, BarChart } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const initialCampaignsData = [
-  { id: 1, name: 'Spring Phishing Test', template: 'Password Reset', startDate: '2023-06-01', startTime: '09:00', status: 'Active' },
-  { id: 2, name: 'New Employee Training', template: 'Onboarding', startDate: '2023-07-15', startTime: '14:00', status: 'Scheduled' },
-  { id: 3, name: 'Q4 Security Awareness', template: 'Security Update', startDate: '2023-10-01', startTime: '10:00', status: 'Completed' },
+  { id: 1, name: 'Spring Phishing Test', template: 'Password Reset', startDate: '2023-06-01', startTime: '09:00', status: 'Active', sentEmails: 1000, clickRate: '15%' },
+  { id: 2, name: 'New Employee Training', template: 'Onboarding', startDate: '2023-07-15', startTime: '14:00', status: 'Scheduled', sentEmails: 0, clickRate: '0%' },
+  { id: 3, name: 'Q4 Security Awareness', template: 'Security Update', startDate: '2023-10-01', startTime: '10:00', status: 'Completed', sentEmails: 5000, clickRate: '22%' },
 ];
+
+const Campaigns = () => {
+  const [campaigns, setCampaigns] = useState(initialCampaignsData);
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [newCampaign, setNewCampaign] = useState({ name: '', template: '', startDate: '', startTime: '' });
+  const [templates, setTemplates] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setTemplates(['Password Reset', 'Onboarding', 'Security Update', 'Phishing Awareness']);
+  }, []);
+
+  const handleCreateCampaign = () => {
+    setIsCreateDialogOpen(true);
+  };
+
+  const handleSaveCampaign = () => {
+    const campaignToAdd = {
+      ...newCampaign,
+      id: campaigns.length + 1,
+      status: 'Scheduled',
+      sentEmails: 0,
+      clickRate: '0%'
+    };
+    setCampaigns([...campaigns, campaignToAdd]);
+    setIsCreateDialogOpen(false);
+    setNewCampaign({ name: '', template: '', startDate: '', startTime: '' });
+  };
+
+  const handleEditCampaign = (campaignId) => {
+    navigate(`/campaign-editor/${campaignId}`);
+  };
+
+  const handleDeleteCampaign = (campaignId) => {
+    setCampaigns(campaigns.filter(campaign => campaign.id !== campaignId));
+  };
+
+  const handleToggleCampaignStatus = (campaignId) => {
+    setCampaigns(campaigns.map(campaign => 
+      campaign.id === campaignId 
+        ? { ...campaign, status: campaign.status === 'Active' ? 'Paused' : 'Active' }
+        : campaign
+    ));
+  };
+
+  const handleViewReport = (campaignId) => {
+    navigate(`/reports/${campaignId}`);
+  };
 
 const Campaigns = () => {
   const [campaigns, setCampaigns] = useState(initialCampaignsData);
@@ -62,6 +111,8 @@ const Campaigns = () => {
             <TableHead>Start Date</TableHead>
             <TableHead>Start Time</TableHead>
             <TableHead>Status</TableHead>
+            <TableHead>Sent Emails</TableHead>
+            <TableHead>Click Rate</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -73,8 +124,57 @@ const Campaigns = () => {
               <TableCell>{campaign.startDate}</TableCell>
               <TableCell>{campaign.startTime}</TableCell>
               <TableCell>{campaign.status}</TableCell>
+              <TableCell>{campaign.sentEmails}</TableCell>
+              <TableCell>{campaign.clickRate}</TableCell>
               <TableCell>
-                <Button variant="outline" size="sm" onClick={() => handleEditCampaign(campaign.id)}>Edit</Button>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="outline" size="icon" onClick={() => handleEditCampaign(campaign.id)}>
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Edit Campaign</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="outline" size="icon" onClick={() => handleDeleteCampaign(campaign.id)}>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Delete Campaign</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="outline" size="icon" onClick={() => handleToggleCampaignStatus(campaign.id)}>
+                        {campaign.status === 'Active' ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{campaign.status === 'Active' ? 'Pause Campaign' : 'Activate Campaign'}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="outline" size="icon" onClick={() => handleViewReport(campaign.id)}>
+                        <BarChart className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>View Report</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </TableCell>
             </TableRow>
           ))}
