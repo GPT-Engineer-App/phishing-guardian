@@ -7,21 +7,40 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const initialTemplatesData = [
-  { id: 1, name: 'Password Reset', type: 'Email', description: 'Template for password reset emails', lastModified: '2023-05-15' },
-  { id: 2, name: 'Social Media Login', type: 'Landing Page', description: 'Fake social media login page', lastModified: '2023-06-01' },
-  { id: 3, name: 'Security Training', type: 'Awareness Page', description: 'Security awareness training page', lastModified: '2023-06-10' },
+  { 
+    id: 1, 
+    name: 'Password Reset Campaign', 
+    description: 'Complete campaign for password reset scenario',
+    lastModified: '2023-05-15',
+    email: { subject: 'Reset Your Password', body: 'Click here to reset your password...' },
+    landingPage: '<form>...</form>',
+    awarenessPage: '<h1>Security Awareness</h1><p>...</p>'
+  },
+  // ... more templates
 ];
 
 const Templates = () => {
   const [templates, setTemplates] = useState(initialTemplatesData);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [newTemplate, setNewTemplate] = useState({ name: '', type: '', description: '' });
+  const [newTemplate, setNewTemplate] = useState({ 
+    name: '', 
+    description: '', 
+    email: { subject: '', body: '' },
+    landingPage: '',
+    awarenessPage: ''
+  });
 
   const handleCreateTemplate = () => {
     const currentDate = new Date().toISOString().split('T')[0];
     setTemplates([...templates, { ...newTemplate, id: templates.length + 1, lastModified: currentDate }]);
     setIsCreateDialogOpen(false);
-    setNewTemplate({ name: '', type: '', description: '' });
+    setNewTemplate({ 
+      name: '', 
+      description: '', 
+      email: { subject: '', body: '' },
+      landingPage: '',
+      awarenessPage: ''
+    });
   };
 
   return (
@@ -37,9 +56,13 @@ const Templates = () => {
               <CardTitle>{template.name}</CardTitle>
             </CardHeader>
             <CardContent className="flex-grow">
-              <p className="text-sm text-gray-500 mb-2">Type: {template.type}</p>
               <p className="text-sm mb-2">{template.description}</p>
-              <p className="text-xs text-gray-400">Last modified: {template.lastModified}</p>
+              <p className="text-xs text-gray-400 mb-2">Last modified: {template.lastModified}</p>
+              <div className="space-y-2">
+                <p className="text-sm font-semibold">Email Subject: {template.email.subject}</p>
+                <p className="text-sm font-semibold">Landing Page: {template.landingPage.substring(0, 50)}...</p>
+                <p className="text-sm font-semibold">Awareness Page: {template.awarenessPage.substring(0, 50)}...</p>
+              </div>
             </CardContent>
             <CardFooter className="flex justify-between">
               <Button variant="outline" size="sm">Edit</Button>
@@ -50,7 +73,7 @@ const Templates = () => {
       </div>
 
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-3xl">
           <DialogHeader>
             <DialogTitle>Create New Template</DialogTitle>
           </DialogHeader>
@@ -65,27 +88,51 @@ const Templates = () => {
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="type" className="text-right">Type</Label>
-              <Select
-                onValueChange={(value) => setNewTemplate({ ...newTemplate, type: value })}
-              >
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Select type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Email">Email</SelectItem>
-                  <SelectItem value="Landing Page">Landing Page</SelectItem>
-                  <SelectItem value="Awareness Page">Awareness Page</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="description" className="text-right">Description</Label>
               <Input
                 id="description"
                 value={newTemplate.description}
                 onChange={(e) => setNewTemplate({ ...newTemplate, description: e.target.value })}
                 className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="emailSubject" className="text-right">Email Subject</Label>
+              <Input
+                id="emailSubject"
+                value={newTemplate.email.subject}
+                onChange={(e) => setNewTemplate({ ...newTemplate, email: { ...newTemplate.email, subject: e.target.value } })}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="emailBody" className="text-right">Email Body</Label>
+              <Textarea
+                id="emailBody"
+                value={newTemplate.email.body}
+                onChange={(e) => setNewTemplate({ ...newTemplate, email: { ...newTemplate.email, body: e.target.value } })}
+                className="col-span-3"
+                rows={5}
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="landingPage" className="text-right">Landing Page</Label>
+              <Textarea
+                id="landingPage"
+                value={newTemplate.landingPage}
+                onChange={(e) => setNewTemplate({ ...newTemplate, landingPage: e.target.value })}
+                className="col-span-3"
+                rows={5}
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="awarenessPage" className="text-right">Awareness Page</Label>
+              <Textarea
+                id="awarenessPage"
+                value={newTemplate.awarenessPage}
+                onChange={(e) => setNewTemplate({ ...newTemplate, awarenessPage: e.target.value })}
+                className="col-span-3"
+                rows={5}
               />
             </div>
           </div>
