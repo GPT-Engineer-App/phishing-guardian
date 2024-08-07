@@ -193,13 +193,26 @@ const TemplateForm = ({ template, setTemplate }) => {
       <div className="grid grid-cols-4 items-center gap-4">
         <Label htmlFor="emailBody" className="text-right">Email Body</Label>
         <div className="col-span-3">
-          <Textarea
-            id="emailBody"
-            value={template.email.body}
-            onChange={(e) => setTemplate({ ...template, email: { ...template.email, body: e.target.value } })}
-            className="w-full"
-            rows={5}
-          />
+          <Tabs defaultValue="edit" className="w-full">
+            <TabsList>
+              <TabsTrigger value="edit">Edit</TabsTrigger>
+              <TabsTrigger value="preview">Preview</TabsTrigger>
+            </TabsList>
+            <TabsContent value="edit">
+              <Textarea
+                id="emailBody"
+                value={template.email.body}
+                onChange={(e) => setTemplate({ ...template, email: { ...template.email, body: e.target.value } })}
+                className="w-full"
+                rows={5}
+              />
+            </TabsContent>
+            <TabsContent value="preview">
+              <div className="border p-4 h-[300px] overflow-auto">
+                <div dangerouslySetInnerHTML={{ __html: template.email.body.replace('{{LANDING_PAGE_URL}}', `${window.location.origin}/landing/${template.landingPage.id}`) }} />
+              </div>
+            </TabsContent>
+          </Tabs>
           <p className="text-sm text-gray-500 mt-1">
             Use {{LANDING_PAGE_URL}} to insert the landing page link in the email body. This placeholder will be replaced with the actual URL when the email is sent.
           </p>
@@ -233,7 +246,7 @@ const TemplateForm = ({ template, setTemplate }) => {
             </TabsContent>
             <TabsContent value="preview">
               <div className="border p-4 h-[300px] overflow-auto">
-                <div dangerouslySetInnerHTML={{ __html: template.landingPage.content }} />
+                <div dangerouslySetInnerHTML={{ __html: template.landingPage.content.replace('{{LANDING_PAGE_URL}}', `${window.location.origin}/landing/${template.landingPage.id}`) }} />
               </div>
             </TabsContent>
           </Tabs>
