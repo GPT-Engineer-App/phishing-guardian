@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,29 +20,30 @@ const queryClient = new QueryClient();
 const App = () => {
   console.log('App component rendered');
   return (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Router>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/campaigns" element={<Campaigns />} />
-            <Route path="/clients" element={<Clients />} />
-            <Route path="/templates" element={<Templates />} />
-            <Route path="/reports" element={<Reports />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/clients/:id" element={<ClientDetails />} />
-            <Route path="/campaign-editor" element={<CampaignEditor />} />
-            <Route path="/campaign-editor/:id" element={<CampaignEditor />} />
-            <Route path="/landing/:id" element={<LandingPage />} />
-          </Routes>
-        </Layout>
-      </Router>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Router>
+          <Layout>
+            <Routes>
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/campaigns" element={<Campaigns />} />
+              <Route path="/clients" element={<Clients />} />
+              <Route path="/templates" element={<Templates />} />
+              <Route path="/reports" element={<Reports />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/clients/:id" element={<ClientDetails />} />
+              <Route path="/campaign-editor" element={<CampaignEditor />} />
+              <Route path="/campaign-editor/:id" element={<CampaignEditor />} />
+              <Route path="/landing/:id" element={<LandingPage />} />
+            </Routes>
+          </Layout>
+        </Router>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
 }
 
 export default App;
