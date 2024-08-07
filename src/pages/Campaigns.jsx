@@ -38,11 +38,7 @@ const Campaigns = () => {
       sentEmails: 0,
       clickRate: '0%'
     };
-    setCampaigns(prevCampaigns => {
-      const updatedCampaigns = [...prevCampaigns, campaignToAdd];
-      console.log('Updated campaigns:', updatedCampaigns);
-      return updatedCampaigns;
-    });
+    setCampaigns(prevCampaigns => [...prevCampaigns, campaignToAdd]);
     setIsCreateDialogOpen(false);
     setNewCampaign({ name: '', template: '', startDate: '', startTime: '' });
   };
@@ -91,7 +87,7 @@ const Campaigns = () => {
         <TableBody>
           {campaigns.map((campaign) => (
             <TableRow key={campaign.id}>
-              <TableCell>{campaign.name}</TableCell>
+              <TableCell className="font-medium">{campaign.name}</TableCell>
               <TableCell>{campaign.template}</TableCell>
               <TableCell>{campaign.startDate}</TableCell>
               <TableCell>{campaign.startTime}</TableCell>
