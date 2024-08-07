@@ -6,8 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { generateUniqueLink } from '../utils/campaignUtils';
+import { toPng } from 'html-to-image';
 
 const CampaignEditor = () => {
+  const [previewImage, setPreviewImage] = useState(null);
   const { id } = useParams();
   const navigate = useNavigate();
   const [campaignName, setCampaignName] = useState('');
@@ -34,6 +36,19 @@ const CampaignEditor = () => {
     console.log('Saving campaign:', { id, campaignName, emailSubject, emailBody, landingPageLink });
     // Navigate back to the campaigns list after saving
     navigate('/campaigns');
+  };
+
+  const generatePreview = () => {
+    const node = document.getElementById('email-preview');
+    if (node) {
+      toPng(node)
+        .then((dataUrl) => {
+          setPreviewImage(dataUrl);
+        })
+        .catch((error) => {
+          console.error('Error generating preview:', error);
+        });
+    }
   };
 
   return (
@@ -97,6 +112,23 @@ const CampaignEditor = () => {
               </p>
             </div>
           </div>
+        </CardContent>
+      </Card>
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>Email Preview</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div id="email-preview" className="border p-4 mb-4">
+            <h2>{emailSubject}</h2>
+            <div dangerouslySetInnerHTML={{ __html: emailBody }} />
+          </div>
+          <Button onClick={generatePreview}>Generate Preview Image</Button>
+          {previewImage && (
+            <div className="mt-4">
+              <img src={previewImage} alt="Email Preview" className="max-w-full h-auto" />
+            </div>
+          )}
         </CardContent>
       </Card>
       <Button onClick={handleSave}>Save Campaign</Button>
