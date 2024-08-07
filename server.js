@@ -6,7 +6,7 @@ require('dotenv').config();
 const app = express();
 
 app.use(cors({
-  origin: 'https://preview--phishing-guardian.gptengineer.run',
+  origin: ['https://preview--phishing-guardian.gptengineer.run', 'http://localhost:5173'],
   credentials: true
 }));
 app.use(express.json());
