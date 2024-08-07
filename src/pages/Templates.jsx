@@ -14,8 +14,8 @@ const initialTemplatesData = [
     description: 'Complete campaign for password reset scenario',
     lastModified: '2023-05-15',
     status: 'active',
-    email: { subject: 'Reset Your Password', body: 'Click here to reset your password: {{LANDING_PAGE_URL}}' },
-    landingPage: { id: 'pwd-reset-1', content: '<form>...</form>' },
+    email: { subject: 'Reset Your Password', body: 'Click here to reset your password...' },
+    landingPage: '<form>...</form>',
     awarenessPage: '<h1>Security Awareness</h1><p>...</p>'
   },
   { 
@@ -25,7 +25,7 @@ const initialTemplatesData = [
     lastModified: '2023-06-01',
     status: 'draft',
     email: { subject: 'Welcome to Our Security Program', body: 'As a new employee...' },
-    landingPage: { id: 'new-emp-1', content: '<h1>Welcome!</h1><p>...</p>' },
+    landingPage: '<h1>Welcome!</h1><p>...</p>',
     awarenessPage: '<h1>Security Best Practices</h1><p>...</p>'
   },
   // ... more templates
@@ -58,7 +58,7 @@ const Templates = () => {
       name: '', 
       description: '', 
       email: { subject: '', body: '' },
-      landingPage: { id: '', content: '' },
+      landingPage: '',
       awarenessPage: '',
       status: 'draft'
     });
@@ -98,8 +98,8 @@ const Templates = () => {
               <p className="text-xs text-gray-400 mb-2">Last modified: {template.lastModified}</p>
               <div className="space-y-2">
                 <p className="text-sm font-semibold">Email Subject: {template.email.subject}</p>
-                <p className="text-sm font-semibold">Landing Page: {template.landingPage.content ? template.landingPage.content.substring(0, 50) : ''}...</p>
-                <p className="text-sm font-semibold">Awareness Page: {template.awarenessPage ? template.awarenessPage.substring(0, 50) : ''}...</p>
+                <p className="text-sm font-semibold">Landing Page: {template.landingPage.substring(0, 50)}...</p>
+                <p className="text-sm font-semibold">Awareness Page: {template.awarenessPage.substring(0, 50)}...</p>
               </div>
             </CardContent>
             <CardFooter className="flex justify-between">
@@ -192,47 +192,17 @@ const TemplateForm = ({ template, setTemplate }) => {
       </div>
       <div className="grid grid-cols-4 items-center gap-4">
         <Label htmlFor="emailBody" className="text-right">Email Body</Label>
-        <div className="col-span-3">
-          <Tabs defaultValue="edit" className="w-full">
-            <TabsList>
-              <TabsTrigger value="edit">Edit</TabsTrigger>
-              <TabsTrigger value="preview">Preview</TabsTrigger>
-            </TabsList>
-            <TabsContent value="edit">
-              <Textarea
-                id="emailBody"
-                value={template.email.body}
-                onChange={(e) => setTemplate({ ...template, email: { ...template.email, body: e.target.value } })}
-                className="w-full"
-                rows={5}
-              />
-            </TabsContent>
-            <TabsContent value="preview">
-              <div className="border p-4 h-72 overflow-auto">
-                <div dangerouslySetInnerHTML={{ __html: template.email.body.replace(/\{\{LANDING_PAGE_URL\}\}/g, `${window.location.origin}/landing/${template.landingPage.id}`) }} />
-              </div>
-            </TabsContent>
-          </Tabs>
-          <p className="text-sm text-gray-500 mt-1">
-            Use {{LANDING_PAGE_URL}} to insert the landing page link in the email body. This placeholder will be replaced with the actual URL when the email is sent.
-          </p>
-          <p className="text-sm text-gray-500 mt-1">
-            Use {{LANDING_PAGE_URL}} to insert the landing page link in the email body. This placeholder will be replaced with the actual URL when the email is sent.
-          </p>
-        </div>
+        <Textarea
+          id="emailBody"
+          value={template.email.body}
+          onChange={(e) => setTemplate({ ...template, email: { ...template.email, body: e.target.value } })}
+          className="col-span-3"
+          rows={5}
+        />
       </div>
       <div className="grid grid-cols-4 items-center gap-4">
         <Label htmlFor="landingPage" className="text-right">Landing Page</Label>
         <div className="col-span-3">
-          <div className="grid grid-cols-4 items-center gap-4 mb-4">
-            <Label htmlFor="landingPageId" className="text-right">ID</Label>
-            <Input
-              id="landingPageId"
-              value={template.landingPage.id}
-              onChange={(e) => setTemplate({ ...template, landingPage: { ...template.landingPage, id: e.target.value } })}
-              className="col-span-3"
-            />
-          </div>
           <Tabs defaultValue="edit" className="w-full">
             <TabsList>
               <TabsTrigger value="edit">Edit</TabsTrigger>
@@ -240,27 +210,19 @@ const TemplateForm = ({ template, setTemplate }) => {
             </TabsList>
             <TabsContent value="edit">
               <Textarea
-                id="landingPageContent"
-                value={template.landingPage.content}
-                onChange={(e) => setTemplate({ ...template, landingPage: { ...template.landingPage, content: e.target.value } })}
+                id="landingPage"
+                value={template.landingPage}
+                onChange={(e) => setTemplate({ ...template, landingPage: e.target.value })}
                 className="w-full"
                 rows={10}
               />
             </TabsContent>
             <TabsContent value="preview">
-              <div className="border p-4 h-72 overflow-auto">
-                <div dangerouslySetInnerHTML={{ __html: template.landingPage.content.replace(/\{\{LANDING_PAGE_URL\}\}/g, `${window.location.origin}/landing/${template.landingPage.id}`) }} />
+              <div className="border p-4 h-[300px] overflow-auto">
+                <div dangerouslySetInnerHTML={{ __html: template.landingPage }} />
               </div>
             </TabsContent>
           </Tabs>
-          <div className="mt-2">
-            <Label>Landing Page URL:</Label>
-            <Input
-              value={`${window.location.origin}/landing/${template.landingPage.id}`}
-              readOnly
-              className="mt-1"
-            />
-          </div>
         </div>
       </div>
       <div className="grid grid-cols-4 items-center gap-4">
@@ -281,7 +243,7 @@ const TemplateForm = ({ template, setTemplate }) => {
               />
             </TabsContent>
             <TabsContent value="preview">
-              <div className="border p-4 h-72 overflow-auto">
+              <div className="border p-4 h-[300px] overflow-auto">
                 <div dangerouslySetInnerHTML={{ __html: template.awarenessPage }} />
               </div>
             </TabsContent>
