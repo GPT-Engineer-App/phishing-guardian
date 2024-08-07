@@ -63,54 +63,6 @@ const Campaigns = () => {
     navigate(`/reports/${campaignId}`);
   };
 
-const Campaigns = () => {
-  const [campaigns, setCampaigns] = useState(initialCampaignsData);
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [newCampaign, setNewCampaign] = useState({ name: '', template: '', startDate: '', startTime: '' });
-  const [templates, setTemplates] = useState([]);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    setTemplates(['Password Reset', 'Onboarding', 'Security Update', 'Phishing Awareness']);
-  }, []);
-
-  const handleCreateCampaign = () => {
-    setIsCreateDialogOpen(true);
-  };
-
-  const handleSaveCampaign = () => {
-    const campaignToAdd = {
-      ...newCampaign,
-      id: campaigns.length + 1,
-      status: 'Scheduled',
-      sentEmails: 0,
-      clickRate: '0%'
-    };
-    setCampaigns([...campaigns, campaignToAdd]);
-    setIsCreateDialogOpen(false);
-    setNewCampaign({ name: '', template: '', startDate: '', startTime: '' });
-  };
-
-  const handleEditCampaign = (campaignId) => {
-    navigate(`/campaign-editor/${campaignId}`);
-  };
-
-  const handleDeleteCampaign = (campaignId) => {
-    setCampaigns(campaigns.filter(campaign => campaign.id !== campaignId));
-  };
-
-  const handleToggleCampaignStatus = (campaignId) => {
-    setCampaigns(campaigns.map(campaign => 
-      campaign.id === campaignId 
-        ? { ...campaign, status: campaign.status === 'Active' ? 'Paused' : 'Active' }
-        : campaign
-    ));
-  };
-
-  const handleViewReport = (campaignId) => {
-    navigate(`/reports/${campaignId}`);
-  };
-
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
