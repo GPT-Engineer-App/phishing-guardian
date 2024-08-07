@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { PlusCircle, Edit } from 'lucide-react';
 
 const ClientDetails = () => {
   const { id } = useParams();
@@ -15,7 +16,10 @@ const ClientDetails = () => {
   const [users, setUsers] = useState([]);
   const [groups, setGroups] = useState(['Management', 'IT', 'HR', 'Finance']);
   const [isAddUserDialogOpen, setIsAddUserDialogOpen] = useState(false);
+  const [isManageGroupsDialogOpen, setIsManageGroupsDialogOpen] = useState(false);
   const [newUser, setNewUser] = useState({ name: '', email: '', group: '' });
+  const [newGroup, setNewGroup] = useState('');
+  const [editingGroup, setEditingGroup] = useState(null);
 
   useEffect(() => {
     // Fetch client details, campaigns, and users
@@ -106,7 +110,10 @@ const ClientDetails = () => {
 
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Users</h2>
-        <Button onClick={() => setIsAddUserDialogOpen(true)}>Add User</Button>
+        <div className="space-x-2">
+          <Button onClick={() => setIsManageGroupsDialogOpen(true)}>Manage Groups</Button>
+          <Button onClick={() => setIsAddUserDialogOpen(true)}>Add User</Button>
+        </div>
       </div>
       <Table>
         <TableHeader>
@@ -190,6 +197,66 @@ const ClientDetails = () => {
               Add User
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isManageGroupsDialogOpen} onOpenChange={setIsManageGroupsDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Manage User Groups</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="flex space-x-2">
+              <Input
+                value={newGroup}
+                onChange={(e) => setNewGroup(e.target.value)}
+                placeholder="New group name"
+              />
+              <Button onClick={() => {
+                if (newGroup.trim()) {
+                  setGroups([...groups, newGroup.trim()]);
+                  setNewGroup('');
+                }
+              }}>
+                <PlusCircle className="mr-2 h-4 w-4" /> Add Group
+              </Button>
+            </div>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Group Name</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {groups.map((group) => (
+                  <TableRow key={group}>
+                    <TableCell>
+                      {editingGroup === group ? (
+                        <Input
+                          value={editingGroup}
+                          onChange={(e) => setEditingGroup(e.target.value)}
+                          onBlur={() => {
+                            if (editingGroup.trim()) {
+                              setGroups(groups.map(g => g === group ? editingGroup.trim() : g));
+                            }
+                            setEditingGroup(null);
+                          }}
+                        />
+                      ) : (
+                        group
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Button variant="outline" size="sm" onClick={() => setEditingGroup(group)}>
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
