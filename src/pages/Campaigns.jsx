@@ -36,6 +36,7 @@ const Campaigns = () => {
   }, []);
 
   const handleCreateCampaign = () => {
+    console.log("Create Campaign button clicked");
     setIsCreateDialogOpen(true);
   };
 
@@ -122,6 +123,9 @@ const Campaigns = () => {
           <PlusCircle className="mr-2 h-4 w-4" /> Create Campaign
         </Button>
       </div>
+      {isCreateDialogOpen && (
+        <p>Dialog is open</p>
+      )}
       <Table>
         <TableHeader>
           <TableRow>
@@ -201,10 +205,14 @@ const Campaigns = () => {
       </Table>
 
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-        <DialogContent>
+        <DialogContent className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg">
           <DialogHeader>
             <DialogTitle>Create New Campaign</DialogTitle>
           </DialogHeader>
+          {isCreateDialogOpen && (
+            <p>Dialog content is rendered</p>
+          )}
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">
